@@ -6,75 +6,53 @@ var {
   StyleSheet,
   PanResponder,
   View,
+  Text,
   TouchableHighlight
 } = React;
 
-var styles = StyleSheet.create({
-  container: {
-    justifyContent: 'center',
+var defaultProps = {
+  values: [50],
+  step: 1,
+  min:0,
+  max:100,
+  selectedStyle: {
+    backgroundColor: 'blue'
   },
-  fullTrack: {
-    flexDirection: 'row',
+  unselectedStyle: {
+    backgroundColor: 'grey'
   },
-  marker: {
+  containerStyle: {
+    height:100,
   },
-  track: {
-    justifyContent: 'center'
-  }
-});
-
-var stepLength;
-
+  fullTrackStyle: {
+    height:10,
+  },
+  trackStyle: {
+    borderRadius: 4,
+  },
+  markerStyle: {
+    height:30,
+    width: 30,
+    borderRadius: 15,
+    backgroundColor:"lightgrey",
+    left: -15,
+    borderWidth: 0.5,
+    borderColor: 'grey',
+  },
+  sliderWidth: 280
+};
 
 
 var Slider = React.createClass({
-  propTypes: {
-    values: PropTypes.arrayOf(PropTypes.number),
-    min: PropTypes.number,
-    max: PropTypes.number,
-    step: PropTypes.number,
-    array: PropTypes.array,
-    containerStyle: PropTypes.object,
-    trackStyle: PropTypes.object,
-    selectedStyle: PropTypes.object,
-    unselectedStyle: PropTypes.object,
-    markerStyle: PropTypes.object,
-  },
+  propTypes: sliderProps,
 
   getDefaultProps: function() {
-
-    return {
-      values: [5],
-      array: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30],
-      selectedStyle: {
-        backgroundColor: 'blue'
-      },
-      unselectedStyle: {
-        backgroundColor: 'grey'
-      },
-      containerStyle: {
-        height:100,
-      },
-      fullTrackStyle: {
-        height:10,
-      },
-      trackStyle: {
-        borderRadius: 4,
-      },
-      markerStyle: {
-        height:30,
-        width: 30,
-        borderRadius: 15,
-        backgroundColor:"lightgrey",
-        left: -15,
-        borderWidth: 0.5,
-        borderColor: 'grey',
-      },
-      sliderWidth: 280
-    };
+    return defaultProps;
   },
+
   getInitialState: function() {
-    var initialValues = this.props.values;
+    this.optionsArray = this.props.optionsArray || converter.createArray(this.props.min,this.props.max,this.props.step);
+    var initialValues = this.props.values.map(value => converter.valueToPosition(value,this.optionsArray,this.props.sliderWidth));
     return {
       pastOne: initialValues[0],
       pastTwo: initialValues[1],
@@ -82,6 +60,7 @@ var Slider = React.createClass({
       positionTwo: initialValues[1]
     };
   },
+
   componentWillMount: function () {
 
     this._panResponderOne = PanResponder.create({
@@ -114,7 +93,7 @@ var Slider = React.createClass({
   moveOne(gestureState) {
     var unconfined  = gestureState.dx + this.state.pastOne;
     var bottom      = 0;
-    var top         = this.state.positionTwo;
+    var top         = this.state.positionTwo || this.props.sliderWidth;;
     var confined    = unconfined < bottom ? bottom : (unconfined > top ? top : unconfined);
     this.setState({
       positionOne: confined
@@ -157,8 +136,11 @@ var Slider = React.createClass({
     var trackTwoLength = sliderWidth - trackOneLength - trackThreeLength;
     var trackTwoStyle = twoMarkers ? selectedStyle : unselectedStyle;
 
+    var convertedValues = [positionOne,positionTwo].map(position => converter.positionToValue(position,this.optionsArray,sliderWidth))
+
     return (
       <View style={[styles.container, this.props.containerStyle]}>
+        <Text>{convertedValues}</Text>
         <View style={[styles.fullTrack, this.props.fullTrackStyle, {width:sliderWidth}]}>
           <View style={[this.props.trackStyle, trackOneStyle, {width: trackOneLength}]} />
           <View style={[this.props.trackStyle, styles.track, trackTwoStyle, {width: trackTwoLength}]}>
@@ -186,3 +168,78 @@ var Slider = React.createClass({
 
 
 module.exports = Slider;
+
+var converter = {
+  valueToPosition: function (value, valuesArray, sliderLength) {
+    var arrLength;
+    var index = valuesArray.indexOf(value);
+
+    if (index === -1) {
+      console.log('Invalid value, array does not contain: ', value)
+      return null;
+    } else {
+      arrLength = valuesArray.length - 1;
+      return sliderLength * index / arrLength;
+    }
+  },
+  positionToValue: function (position, valuesArray, sliderLength) {
+    var arrLength;
+    var index;
+
+    if ( position < 0 || sliderLength < position ) {
+      console.log('invalid position: ', position);
+      return null;
+    } else {
+      arrLength = valuesArray.length - 1;
+      index = arrLength * position / sliderLength;
+      return valuesArray[Math.round(index)];
+    }
+  },
+  createArray: function (start, end, step) {
+    var i;
+    var length;
+    var direction = start - end > 0 ? -1 : 1;
+    var result = [];
+    if (!step) {
+        console.log('invalid step: ', step);
+        return result;
+    } else {
+        length = Math.abs((start - end)/step) + 1;
+        for (i=0 ; i<length ; i++){
+          result.push(start + i * Math.abs(step)*direction);
+        }
+        return result;
+    }
+  }
+}
+
+
+var styles = StyleSheet.create({
+  container: {
+    justifyContent: 'center',
+  },
+  fullTrack: {
+    flexDirection: 'row',
+  },
+  marker: {
+  },
+  track: {
+    justifyContent: 'center'
+  }
+});
+
+var sliderProps = {
+  values: PropTypes.arrayOf(PropTypes.number),
+
+  min: PropTypes.number,
+  max: PropTypes.number,
+  step: PropTypes.number,
+
+  optionsArray: PropTypes.array,
+
+  containerStyle: PropTypes.object,
+  trackStyle: PropTypes.object,
+  selectedStyle: PropTypes.object,
+  unselectedStyle: PropTypes.object,
+  markerStyle: PropTypes.object,
+};

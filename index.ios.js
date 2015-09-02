@@ -15,9 +15,9 @@ var Slider = React.createClass({
     return (
       <View style={styles.container}>
         <Text>One Marker</Text>
-        <MultiSlider values={[100]}/>
+        <MultiSlider values={[50]}/>
         <Text>Two Marker</Text>
-        <MultiSlider values={[100,200]} />
+        <MultiSlider values={[33,67]} />
       </View>
     );
   }
