@@ -28,7 +28,7 @@ var defaultProps = {
     height:10,
   },
   trackStyle: {
-    borderRadius: 4,
+    borderRadius: 5,
   },
   markerStyle: {
     height:30,
@@ -150,13 +150,15 @@ var Slider = React.createClass({
               {...this._panResponderOne.panHandlers}
             />
           </View>
-          {twoMarkers && (positionOne !== this.props.sliderWidth) && (
-            <View style={[this.props.trackStyle, styles.track, trackThreeStyle, {width: trackThreeLength}]}>
-              <View
-                ref={component => this._markerTwo = component}
-                style={[this.props.markerStyle]}
-                {...this._panResponderTwo.panHandlers}
-              />
+          {twoMarkers && (
+            <View testID={'slide'} style={[this.props.trackStyle, styles.track, trackThreeStyle, {width: trackThreeLength}]}>
+              {(positionOne !== this.props.sliderWidth) && (
+                <View
+                  ref={component => this._markerTwo = component}
+                  style={[this.props.markerStyle]}
+                  {...this._panResponderTwo.panHandlers}
+                />
+              )}
             </View>
           )}
         </View>
