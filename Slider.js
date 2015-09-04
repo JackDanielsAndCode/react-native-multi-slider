@@ -92,7 +92,7 @@ var Slider = React.createClass({
 
   moveOne(gestureState) {
     var unconfined  = gestureState.dx + this.state.pastOne;
-    var bottom      = 0;
+    var bottom      = 1;
     var top         = this.state.positionTwo || this.props.sliderWidth;;
     var confined    = unconfined < bottom ? bottom : (unconfined > top ? top : unconfined);
     this.setState({
