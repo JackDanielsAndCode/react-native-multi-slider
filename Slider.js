@@ -150,7 +150,7 @@ var Slider = React.createClass({
               {...this._panResponderOne.panHandlers}
             />
           </View>
-          {twoMarkers && (
+          {twoMarkers && (positionOne !== this.props.sliderWidth) && (
             <View style={[this.props.trackStyle, styles.track, trackThreeStyle, {width: trackThreeLength}]}>
               <View
                 ref={component => this._markerTwo = component}
