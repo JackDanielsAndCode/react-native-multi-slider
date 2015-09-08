@@ -28,7 +28,7 @@ var defaultProps = {
     height:10,
   },
   trackStyle: {
-    borderRadius: 4,
+    borderRadius: 5,
   },
   markerStyle: {
     height:30,
@@ -92,7 +92,7 @@ var Slider = React.createClass({
 
   moveOne(gestureState) {
     var unconfined  = gestureState.dx + this.state.pastOne;
-    var bottom      = 0;
+    var bottom      = 1;
     var top         = this.state.positionTwo || this.props.sliderWidth;;
     var confined    = unconfined < bottom ? bottom : (unconfined > top ? top : unconfined);
     this.setState({
@@ -151,12 +151,14 @@ var Slider = React.createClass({
             />
           </View>
           {twoMarkers && (
-            <View style={[this.props.trackStyle, styles.track, trackThreeStyle, {width: trackThreeLength}]}>
-              <View
-                ref={component => this._markerTwo = component}
-                style={[this.props.markerStyle]}
-                {...this._panResponderTwo.panHandlers}
-              />
+            <View testID={'slide'} style={[this.props.trackStyle, styles.track, trackThreeStyle, {width: trackThreeLength}]}>
+              {(positionOne !== this.props.sliderWidth) && (
+                <View
+                  ref={component => this._markerTwo = component}
+                  style={[this.props.markerStyle]}
+                  {...this._panResponderTwo.panHandlers}
+                />
+              )}
             </View>
           )}
         </View>
