@@ -10,6 +10,22 @@ var {
   TouchableHighlight
 } = React;
 
+var sliderProps = {
+  values: PropTypes.arrayOf(PropTypes.number),
+
+  min: PropTypes.number,
+  max: PropTypes.number,
+  step: PropTypes.number,
+
+  optionsArray: PropTypes.array,
+
+  containerStyle: PropTypes.object,
+  trackStyle: PropTypes.object,
+  selectedStyle: PropTypes.object,
+  unselectedStyle: PropTypes.object,
+  markerStyle: PropTypes.object,
+};
+
 var defaultProps = {
   values: [50],
   step: 1,
@@ -95,9 +111,11 @@ var Slider = React.createClass({
     var bottom      = 0;
     var top         = this.state.positionTwo || this.props.sliderWidth;;
     var confined    = unconfined < bottom ? bottom : (unconfined > top ? top : unconfined);
-    this.setState({
-      positionOne: confined
-    });
+    if (Math.abs(gestureState.dy) < 20) {
+      this.setState({
+        positionOne: confined
+      });
+    }
   },
 
   endOne(gestureState) {
@@ -112,9 +130,11 @@ var Slider = React.createClass({
     var top         = this.props.sliderWidth;
     var confined    = unconfined < bottom ? bottom : (unconfined > top ? top : unconfined);
 
-    this.setState({
-      positionTwo: confined
-    });
+    if (Math.abs(gestureState.dy) < 20) {
+      this.setState({
+        positionOne: confined
+      });
+    }
   },
 
   endTwo(gestureState) {
@@ -227,19 +247,3 @@ var styles = StyleSheet.create({
     justifyContent: 'center'
   }
 });
-
-var sliderProps = {
-  values: PropTypes.arrayOf(PropTypes.number),
-
-  min: PropTypes.number,
-  max: PropTypes.number,
-  step: PropTypes.number,
-
-  optionsArray: PropTypes.array,
-
-  containerStyle: PropTypes.object,
-  trackStyle: PropTypes.object,
-  selectedStyle: PropTypes.object,
-  unselectedStyle: PropTypes.object,
-  markerStyle: PropTypes.object,
-};

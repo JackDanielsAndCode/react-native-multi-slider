@@ -4,7 +4,8 @@
   "description": "Pure JS slider component with multiple markers for React Native",
   "main": "Slider.js",
   "scripts": {
-    "start": "node_modules/react-native/packager/packager.sh"
+    "start": "node_modules/react-native/packager/packager.sh",
+    "open:xcode": "open iOS/Slider.xcodeproj"
   },
   "repository": {
     "type": "git",
