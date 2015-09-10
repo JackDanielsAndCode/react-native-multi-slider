@@ -10,50 +10,50 @@ var {
   TouchableHighlight
 } = React;
 
-var defaultProps = {
-  values: [50],
-  step: 1,
-  min:0,
-  max:100,
-  selectedStyle: {
-    backgroundColor: 'blue'
-  },
-  unselectedStyle: {
-    backgroundColor: 'grey'
-  },
-  containerStyle: {
-    height:100,
-  },
-  fullTrackStyle: {
-    height:10,
-  },
-  trackStyle: {
-    borderRadius: 5,
-  },
-  markerStyle: {
-    height:30,
-    width: 30,
-    borderRadius: 15,
-    backgroundColor:"lightgrey",
-    left: -15,
-    borderWidth: 0.5,
-    borderColor: 'grey',
-  },
-  sliderWidth: 280
+var converter = require('./converter.js');
+var mockProps = require('./mockProps');
+
+var sliderProps = {
+  values: PropTypes.arrayOf(PropTypes.number),
+
+  onValuesChangeStart: PropTypes.func,
+  onValuesChange: PropTypes.func,
+  onValuesChangeFinish: PropTypes.func,
+
+  slipHeight: PropTypes.number,
+
+  min: PropTypes.number,
+  max: PropTypes.number,
+  step: PropTypes.number,
+
+  optionsArray: PropTypes.array,
+
+  containerStyle: PropTypes.object,
+  trackStyle: PropTypes.object,
+  selectedStyle: PropTypes.object,
+  unselectedStyle: PropTypes.object,
+  markerStyle: PropTypes.object,
+  pressedMarkerStyle: PropTypes.object
 };
 
-
 var Slider = React.createClass({
+
   propTypes: sliderProps,
 
   getDefaultProps: function() {
-    return defaultProps;
+    return mockProps;
   },
 
   getInitialState: function() {
     this.optionsArray = this.props.optionsArray || converter.createArray(this.props.min,this.props.max,this.props.step);
+    this.stepLength = this.props.sliderWidth/this.optionsArray.length;
+
     var initialValues = this.props.values.map(value => converter.valueToPosition(value,this.optionsArray,this.props.sliderWidth));
+
     return {
+      pressedOne: true,
+      valueOne: this.props.values[0],
+      valueTwo: this.props.values[1],
       pastOne: initialValues[0],
       pastTwo: initialValues[1],
       positionOne: initialValues[0],
@@ -62,64 +62,102 @@ var Slider = React.createClass({
   },
 
   componentWillMount: function () {
+    var customPanResponder = function (start,move,end) {
+      return PanResponder.create({
+        onStartShouldSetPanResponder: (evt, gestureState) => true,
+        onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
+        onMoveShouldSetPanResponder: (evt, gestureState) => true,
+        onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
+        onPanResponderGrant: (evt, gestureState) => start(),
+        onPanResponderMove: (evt, gestureState) => move(gestureState),
+        onPanResponderTerminationRequest: (evt, gestureState) => true,
+        onPanResponderRelease: (evt, gestureState) => end(gestureState),
+        onPanResponderTerminate: (evt, gestureState) => end(gestureState),
+        onShouldBlockNativeResponder: (evt, gestureState) => true
+      })
+    };
 
-    this._panResponderOne = PanResponder.create({
-      onStartShouldSetPanResponder: (evt, gestureState) => true,
-      onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
-      onMoveShouldSetPanResponder: (evt, gestureState) => true,
-      onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
-      onPanResponderGrant: (evt, gestureState) => console.log("poop",gestureState),
-      onPanResponderMove: (evt, gestureState) => this.moveOne(gestureState),
-      onPanResponderTerminationRequest: (evt, gestureState) => true,
-      onPanResponderRelease: (evt, gestureState) => this.endOne(gestureState),
-      onPanResponderTerminate: (evt, gestureState) => console.log('end'),
-      onShouldBlockNativeResponder: (evt, gestureState) => true
-    });
-    this._panResponderTwo = PanResponder.create({
-      onStartShouldSetPanResponder: (evt, gestureState) => true,
-      onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
-      onMoveShouldSetPanResponder: (evt, gestureState) => true,
-      onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
-      onPanResponderGrant: (evt, gestureState) => console.log(arguments, "argument", gestureState),
-      onPanResponderMove: (evt, gestureState) => this.moveTwo(gestureState),
-      onPanResponderTerminationRequest: (evt, gestureState) => true,
-      onPanResponderRelease: (evt, gestureState) => this.endTwo(gestureState),
-      onPanResponderTerminate: (evt, gestureState) => console.log('end'),
-      onShouldBlockNativeResponder: (evt, gestureState) => true
-    });
+    this._panResponderOne = customPanResponder(this.startOne, this.moveOne, this.endOne);
+    this._panResponderTwo = customPanResponder(this.startTwo, this.moveTwo, this.endTwo);
 
   },
 
-  moveOne(gestureState) {
-    var unconfined  = gestureState.dx + this.state.pastOne;
-    var bottom      = 1;
-    var top         = this.state.positionTwo || this.props.sliderWidth;;
-    var confined    = unconfined < bottom ? bottom : (unconfined > top ? top : unconfined);
+  startOne () {
     this.setState({
-      positionOne: confined
+      onePressed: !this.state.onePressed
     });
+  },
+
+  startTwo () {
+    this.setState({
+      twoPressed: !this.state.twoPressed
+    });
+  },
+
+  moveOne(gestureState) {
+    var unconfined = gestureState.dx + this.state.pastOne;
+    var bottom     = 0;
+    var top        = (this.state.positionTwo - this.stepLength) || this.props.sliderWidth;
+    var confined   = unconfined < bottom ? bottom : (unconfined > top ? top : unconfined);
+    var value      = converter.positionToValue(this.state.positionOne, this.optionsArray, this.props.sliderWidth);
+    if (Math.abs(gestureState.dy) < this.props.slipHeight) {
+      this.setState({
+        positionOne: confined
+      });
+    }
+    if ( value !== this.state.valueOne ) {
+      this.setState({
+        valueOne: value
+      }, function () {
+        var change = [this.state.valueOne];
+        if (this.state.valueTwo) {
+          change.push(this.state.valueTwo);
+        }
+        this.props.onValuesChange(change);
+      });
+    }
+  },
+
+  moveTwo(gestureState) {
+    var unconfined  = gestureState.dx + this.state.pastTwo;
+    var bottom      = this.state.positionOne + this.stepLength;
+    var top         = this.props.sliderWidth;
+    var confined    = unconfined < bottom ? bottom : (unconfined > top ? top : unconfined);
+    var value       = converter.positionToValue(this.state.positionTwo, this.optionsArray, this.props.sliderWidth);
+
+    if (Math.abs(gestureState.dy) < 50) {
+      this.setState({
+        positionTwo: confined
+      });
+    }
+    if ( value !== this.state.valueTwo ) {
+      this.setState({
+        valueTwo: value
+      }, function () {
+        this.props.onValuesChange([this.state.valueOne,this.state.valueTwo]);
+      });
+    }
   },
 
   endOne(gestureState) {
     this.setState({
       pastOne: this.state.positionOne,
-    });
-  },
-
-  moveTwo(gestureState) {
-    var unconfined  = gestureState.dx + this.state.pastTwo;
-    var bottom      = this.state.positionOne;
-    var top         = this.props.sliderWidth;
-    var confined    = unconfined < bottom ? bottom : (unconfined > top ? top : unconfined);
-
-    this.setState({
-      positionTwo: confined
+      onePressed: !this.state.onePressed
+    }, function () {
+      var change = [this.state.valueOne];
+      if (this.state.valueTwo) {
+        change.push(this.state.valueTwo);
+      }
+      this.props.onValuesChanged(change);
     });
   },
 
   endTwo(gestureState) {
     this.setState({
+      twoPressed: !this.state.twoPressed,
       pastTwo: this.state.positionTwo,
+    }, function () {
+      this.props.onValuesChanged([this.state.valueOne,this.state.valueTwo]);
     });
   },
 
@@ -136,17 +174,14 @@ var Slider = React.createClass({
     var trackTwoLength = sliderWidth - trackOneLength - trackThreeLength;
     var trackTwoStyle = twoMarkers ? selectedStyle : unselectedStyle;
 
-    var convertedValues = [positionOne,positionTwo].map(position => converter.positionToValue(position,this.optionsArray,sliderWidth))
-
     return (
       <View style={[styles.container, this.props.containerStyle]}>
-        <Text>{convertedValues}</Text>
         <View style={[styles.fullTrack, this.props.fullTrackStyle, {width:sliderWidth}]}>
           <View style={[this.props.trackStyle, trackOneStyle, {width: trackOneLength}]} />
           <View style={[this.props.trackStyle, styles.track, trackTwoStyle, {width: trackTwoLength}]}>
             <View
               ref={component => this._markerOne = component}
-              style={[this.props.markerStyle]}
+              style={[this.props.markerStyle, this.state.onePressed && this.props.pressedMarkerStyle]}
               {...this._panResponderOne.panHandlers}
             />
           </View>
@@ -155,7 +190,7 @@ var Slider = React.createClass({
               {(positionOne !== this.props.sliderWidth) && (
                 <View
                   ref={component => this._markerTwo = component}
-                  style={[this.props.markerStyle]}
+                  style={[this.props.markerStyle, this.state.twoPressed && this.props.pressedMarkerStyle]}
                   {...this._panResponderTwo.panHandlers}
                 />
               )}
@@ -167,53 +202,7 @@ var Slider = React.createClass({
   }
 });
 
-
-
 module.exports = Slider;
-
-var converter = {
-  valueToPosition: function (value, valuesArray, sliderLength) {
-    var arrLength;
-    var index = valuesArray.indexOf(value);
-
-    if (index === -1) {
-      console.log('Invalid value, array does not contain: ', value)
-      return null;
-    } else {
-      arrLength = valuesArray.length - 1;
-      return sliderLength * index / arrLength;
-    }
-  },
-  positionToValue: function (position, valuesArray, sliderLength) {
-    var arrLength;
-    var index;
-
-    if ( position < 0 || sliderLength < position ) {
-      console.log('invalid position: ', position);
-      return null;
-    } else {
-      arrLength = valuesArray.length - 1;
-      index = arrLength * position / sliderLength;
-      return valuesArray[Math.round(index)];
-    }
-  },
-  createArray: function (start, end, step) {
-    var i;
-    var length;
-    var direction = start - end > 0 ? -1 : 1;
-    var result = [];
-    if (!step) {
-        console.log('invalid step: ', step);
-        return result;
-    } else {
-        length = Math.abs((start - end)/step) + 1;
-        for (i=0 ; i<length ; i++){
-          result.push(start + i * Math.abs(step)*direction);
-        }
-        return result;
-    }
-  }
-}
 
 
 var styles = StyleSheet.create({
@@ -223,25 +212,7 @@ var styles = StyleSheet.create({
   fullTrack: {
     flexDirection: 'row',
   },
-  marker: {
-  },
   track: {
     justifyContent: 'center'
   }
 });
-
-var sliderProps = {
-  values: PropTypes.arrayOf(PropTypes.number),
-
-  min: PropTypes.number,
-  max: PropTypes.number,
-  step: PropTypes.number,
-
-  optionsArray: PropTypes.array,
-
-  containerStyle: PropTypes.object,
-  trackStyle: PropTypes.object,
-  selectedStyle: PropTypes.object,
-  unselectedStyle: PropTypes.object,
-  markerStyle: PropTypes.object,
-};
