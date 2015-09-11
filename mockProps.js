@@ -1,17 +1,20 @@
 'use strict';
 
 var mockProps = {
-  values: [5],
-  onValuesChange: function (values) {
-    console.log("changing", values)
+  values: [0],
+  onValuesChangeStart: function () {
+    console.log('press started');
   },
-  onValuesChanged: function (values) {
-    console.log("changed", values)
+  onValuesChange: function (values) {
+    console.log('changing', values);
+  },
+  onValuesChangeFinish: function (values) {
+    console.log('changed', values);
   },
   step: 1,
   min:0,
   max:10,
-  slipHeight: 50,
+  slipDisplacement: 50,
   selectedStyle: {
     backgroundColor: 'blue'
   },
@@ -21,10 +24,8 @@ var mockProps = {
   containerStyle: {
     height:100,
   },
-  fullTrackStyle: {
-    height:10,
-  },
   trackStyle: {
+    height:10,
     borderRadius: 5,
   },
   markerStyle: {
@@ -39,7 +40,7 @@ var mockProps = {
   pressedMarkerStyle: {
     backgroundColor:'#D3D3D3',
   },
-  sliderWidth: 280
+  sliderLength: 280
 };
 
 module.exports = mockProps;

@@ -18,9 +18,9 @@ var Slider = React.createClass({
         <Text style={styles.title}>Sliders!</Text>
         <View style={styles.sliders}>
           <Text style={styles.text}>One Marker</Text>
-          <MultiSlider sliderWidth={300} />
+          <MultiSlider sliderLength={280} />
           <Text style={styles.text}>Two Markers</Text>
-          <MultiSlider values={[3,7]} sliderWidth={300} />
+          <MultiSlider values={[3,7]} sliderLength={280} />
           <Text style={styles.text}>Native RCT Slider</Text>
           <SliderIOS />
         </View>
@@ -38,7 +38,7 @@ var styles = StyleSheet.create({
   },
   sliders: {
     margin: 20,
-    width: 300
+    width: 280
   },
   text: {
     alignSelf: "center"
