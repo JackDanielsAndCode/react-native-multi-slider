@@ -6,7 +6,6 @@ var {
   StyleSheet,
   PanResponder,
   View,
-  Text,
   TouchableHighlight
 } = React;
 
@@ -20,7 +19,10 @@ var sliderProps = {
   onValuesChange: PropTypes.func,
   onValuesChangeFinish: PropTypes.func,
 
-  slipHeight: PropTypes.number,
+  sliderLength: PropTypes.number,
+  slipDisplacement: PropTypes.number,
+  sliderOrientation: PropTypes.string,
+
 
   min: PropTypes.number,
   max: PropTypes.number,
@@ -44,11 +46,11 @@ var Slider = React.createClass({
     return mockProps;
   },
 
-  getInitialState: function() {
+  getInitialState() {
     this.optionsArray = this.props.optionsArray || converter.createArray(this.props.min,this.props.max,this.props.step);
-    this.stepLength = this.props.sliderWidth/this.optionsArray.length;
+    this.stepLength = this.props.sliderLength/this.optionsArray.length;
 
-    var initialValues = this.props.values.map(value => converter.valueToPosition(value,this.optionsArray,this.props.sliderWidth));
+    var initialValues = this.props.values.map(value => converter.valueToPosition(value,this.optionsArray,this.props.sliderLength));
 
     return {
       pressedOne: true,
@@ -61,7 +63,7 @@ var Slider = React.createClass({
     };
   },
 
-  componentWillMount: function () {
+  componentWillMount() {
     var customPanResponder = function (start,move,end) {
       return PanResponder.create({
         onStartShouldSetPanResponder: (evt, gestureState) => true,
@@ -89,6 +91,7 @@ var Slider = React.createClass({
   },
 
   startTwo () {
+    this.props.onValuesChangeStart()
     this.setState({
       twoPressed: !this.state.twoPressed
     });
@@ -97,10 +100,10 @@ var Slider = React.createClass({
   moveOne(gestureState) {
     var unconfined = gestureState.dx + this.state.pastOne;
     var bottom     = 0;
-    var top        = (this.state.positionTwo - this.stepLength) || this.props.sliderWidth;
+    var top        = (this.state.positionTwo - this.stepLength) || this.props.sliderLength;
     var confined   = unconfined < bottom ? bottom : (unconfined > top ? top : unconfined);
-    var value      = converter.positionToValue(this.state.positionOne, this.optionsArray, this.props.sliderWidth);
-    if (Math.abs(gestureState.dy) < this.props.slipHeight) {
+    var value      = converter.positionToValue(this.state.positionOne, this.optionsArray, this.props.sliderLength);
+    if (Math.abs(gestureState.dy) < this.props.slipDisplacement) {
       this.setState({
         positionOne: confined
       });
@@ -121,11 +124,11 @@ var Slider = React.createClass({
   moveTwo(gestureState) {
     var unconfined  = gestureState.dx + this.state.pastTwo;
     var bottom      = this.state.positionOne + this.stepLength;
-    var top         = this.props.sliderWidth;
+    var top         = this.props.sliderLength;
     var confined    = unconfined < bottom ? bottom : (unconfined > top ? top : unconfined);
-    var value       = converter.positionToValue(this.state.positionTwo, this.optionsArray, this.props.sliderWidth);
+    var value       = converter.positionToValue(this.state.positionTwo, this.optionsArray, this.props.sliderLength);
 
-    if (Math.abs(gestureState.dy) < 50) {
+    if (Math.abs(gestureState.dy) < this.props.slipDisplacement) {
       this.setState({
         positionTwo: confined
       });
@@ -148,7 +151,7 @@ var Slider = React.createClass({
       if (this.state.valueTwo) {
         change.push(this.state.valueTwo);
       }
-      this.props.onValuesChanged(change);
+      this.props.onValuesChangeFinish(change);
     });
   },
 
@@ -157,27 +160,27 @@ var Slider = React.createClass({
       twoPressed: !this.state.twoPressed,
       pastTwo: this.state.positionTwo,
     }, function () {
-      this.props.onValuesChanged([this.state.valueOne,this.state.valueTwo]);
+      this.props.onValuesChangeFinish([this.state.valueOne,this.state.valueTwo]);
     });
   },
 
-  render: function() {
+  render() {
 
     var {positionOne, positionTwo} = this.state;
-    var {selectedStyle, unselectedStyle, sliderWidth} = this.props;
+    var {selectedStyle, unselectedStyle, sliderLength} = this.props;
     var twoMarkers = positionTwo;
 
     var trackOneLength = positionOne;
     var trackOneStyle = twoMarkers ? unselectedStyle : selectedStyle;
-    var trackThreeLength = twoMarkers ? sliderWidth - (positionTwo) : 0;
+    var trackThreeLength = twoMarkers ? sliderLength - (positionTwo) : 0;
     var trackThreeStyle = unselectedStyle;
-    var trackTwoLength = sliderWidth - trackOneLength - trackThreeLength;
+    var trackTwoLength = sliderLength - trackOneLength - trackThreeLength;
     var trackTwoStyle = twoMarkers ? selectedStyle : unselectedStyle;
 
     return (
       <View style={[styles.container, this.props.containerStyle]}>
-        <View style={[styles.fullTrack, this.props.fullTrackStyle, {width:sliderWidth}]}>
-          <View style={[this.props.trackStyle, trackOneStyle, {width: trackOneLength}]} />
+        <View style={[styles.fullTrack, {width:sliderLength}]}>
+          <View style={[this.props.trackStyle, styles.track, trackOneStyle, {width: trackOneLength}]} />
           <View style={[this.props.trackStyle, styles.track, trackTwoStyle, {width: trackTwoLength}]}>
             <View
               ref={component => this._markerOne = component}
@@ -186,8 +189,8 @@ var Slider = React.createClass({
             />
           </View>
           {twoMarkers && (
-            <View testID={'slide'} style={[this.props.trackStyle, styles.track, trackThreeStyle, {width: trackThreeLength}]}>
-              {(positionOne !== this.props.sliderWidth) && (
+            <View style={[this.props.trackStyle, styles.track, trackThreeStyle, {width: trackThreeLength}]}>
+              {(positionOne !== this.props.sliderLength) && (
                 <View
                   ref={component => this._markerTwo = component}
                   style={[this.props.markerStyle, this.state.twoPressed && this.props.pressedMarkerStyle]}
