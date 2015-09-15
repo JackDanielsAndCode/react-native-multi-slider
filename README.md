@@ -8,9 +8,9 @@ Options to customise track, touch area and provide customer markers and callback
 
  Open `iOS/Slider.xcodeproj` with Xcode, then press `Cmd + R`; you may edit `index.ios.js` to try building your own custom sliders. Feel free to make a PR if you are particularly proud of your slider and want it to feature. (Shortcut `npm run open:xcode`)
 
-### [index.ios.js](https://github.com/JackDanielsAndCode/react-native-swiper/blob/master/index.ios.js)
+### [index.ios.js](https://github.com/JackDanielsAndCode/react-native-multi-slider/blob/master/index.ios.js)
 
-![Slider Examples](https://github.com/JackDanielsAndCode/react-native-swiper/blob/master/examplesInAction.gif)
+![Slider Examples](https://github.com/JackDanielsAndCode/react-native-multi-slider/blob/master/examplesInAction.gif)
 
 
 ## Getting Started
