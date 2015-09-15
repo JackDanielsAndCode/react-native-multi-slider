@@ -1,6 +1,6 @@
 {
   "name": "react-native-multi-slider",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Pure JS slider component with multiple markers for React Native",
   "main": "Slider.js",
   "scripts": {
