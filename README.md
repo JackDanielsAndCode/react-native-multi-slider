@@ -1,14 +1,16 @@
 # react-native-multi-slider
+
 Pure JS react native slider component with one or two markers.
+Options to customise track, touch area and provide customer markers and callbacks for touch events and value changes.
 
 
 ## Examples
 
- Try these cases by yourself very easy, Just open `iOS/Slider.xcodeproj` with Xcode, then press `Cmd + R`; you may edit `index.ios.js` to try building your own custom sliders. Feel free to make a PR if you are particularly proud of your slider and want it to feature.
+ Open `iOS/Slider.xcodeproj` with Xcode, then press `Cmd + R`; you may edit `index.ios.js` to try building your own custom sliders. Feel free to make a PR if you are particularly proud of your slider and want it to feature. (Shortcut `npm run open:xcode`)
 
-### [index.ios.js](https://github.com/leecade/react-native-swiper/blob/master/index.ios.js)
+### [index.ios.js](https://github.com/JackDanielsAndCode/react-native-swiper/blob/master/index.ios.js)
 
-![](link to gif file)
+![Slider Examples](https://github.com/JackDanielsAndCode/react-native-swiper/blob/master/examplesInAction.gif)
 
 
 ## Getting Started
@@ -44,28 +46,28 @@ $ npm i react-native-multi-slider --save
 
 | Prop  | Default  | Type | Description |
 | :------------ |:---------------:| :---------------:| :-----|
-| onValuesChangeStart | - | `func` | Function to be called at beginning of press |
-| onValuesChange | - | `func` | Function called after every change in value, with current values passed in as an array. |
-| onValuesChangeFinish | - | `func` | Function called on end of press with final values passed in as an array |
+| onValuesChangeStart | console.log... | `function()` | Function to be called at beginning of press |
+| onValuesChange | console.log... | function(valuesArray) | Function called after every change in value, with current values passed in as an array. |
+| onValuesChangeFinish | console.log... |function(valuesArray) | Function called on end of press with final values passed in as an array |
 
 #### Slider Boundaries
 
 | Prop  | Default  | Type | Description |
 | :------------ |:---------------:| :---------------:| :-----|
 | sliderLength | 280 | `number` | Width of track |
-| slipDisplacement | 50 | `number` | If finger leaves the marker measures distance before responder cuts out and changes are no longer registered|
+| touchDimensions | `{ height: 30, width: 30, borderRadius: 15, slipDisplacement: 30 }`, | `object` | Area to be touched, should enclose the whole marker. Will be automatically centered and contain the marker. Slip displacement If finger leaves the marker measures distance before responder cuts out and changes are no longer registered, if not given marker will be active until pressed released. |
 | sliderOrientation | horizontal | horizontal or vertical | TODO |
 
 #### Custom Style
 
 | Prop  | Default  | Type | Description |
 | :------------ |:---------------:| :---------------:| :-----|
-| containerStyle | {height:100} | `object` | Style of sliders container, note be careful in applying styles that may affect the children's (i.e. the slider's) positioning |
-| trackStyle | {borderRadius: 5,height:10} | `object` | Customise the track |
-| selectedStyle | {backgroundColor: 'blue'} | `object` | Style for the track up to a single marker or between double markers |
-| unselectedStyle | {backgroundColor: 'grey'} | `object` | Style for remaining track |
-| markerStyle | {height:30,width: 30,borderRadius: 15,backgroundColor:'#E8E8E8',left: -15,borderWidth: 0.5,borderColor: 'grey'} | `object` | Customise the marker's style |
-| pressedMarkerStyle | {backgroundColor:'#D3D3D3'} | `object` | Style to be given to marker when pressed |  
+| containerStyle | `{height:30}` | `object` | Style of sliders container, note be careful in applying styles that may affect the children's (i.e. the slider's) positioning |
+| trackStyle | `{ borderRadius: 7, height: 3.5 }` | `object` | Customise the track |
+| selectedStyle | `{backgroundColor: 'blue'}` | `object` | Style for the track up to a single marker or between double markers |
+| unselectedStyle | `{backgroundColor: 'grey'}` | `object` | Style for remaining track |
+| markerStyle | `{ height:30, width: 30, borderRadius: 15, backgroundColor:'#E8E8E8', borderWidth: 0.5, borderColor: 'grey'}` | `object` | Customise the marker's style |
+| pressedMarkerStyle | `{backgroundColor:'#D3D3D3'}` | `object` | Style to be given to marker when pressed |  
 
 
 ## Questions & Suggestions

@@ -10,7 +10,9 @@ var {
 } = React;
 
 var converter = require('./converter.js');
-var mockProps = require('./mockProps');
+var mockProps = require('./mockProps.js');
+
+
 
 var sliderProps = {
   values: PropTypes.arrayOf(PropTypes.number),
@@ -20,9 +22,10 @@ var sliderProps = {
   onValuesChangeFinish: PropTypes.func,
 
   sliderLength: PropTypes.number,
-  slipDisplacement: PropTypes.number,
   sliderOrientation: PropTypes.string,
+  touchDimensions: PropTypes.object,
 
+  customMarker: PropTypes.element,
 
   min: PropTypes.number,
   max: PropTypes.number,
@@ -85,13 +88,14 @@ var Slider = React.createClass({
   },
 
   startOne () {
+    this.props.onValuesChangeStart();
     this.setState({
       onePressed: !this.state.onePressed
     });
   },
 
   startTwo () {
-    this.props.onValuesChangeStart()
+    this.props.onValuesChangeStart();
     this.setState({
       twoPressed: !this.state.twoPressed
     });
@@ -103,7 +107,10 @@ var Slider = React.createClass({
     var top        = (this.state.positionTwo - this.stepLength) || this.props.sliderLength;
     var confined   = unconfined < bottom ? bottom : (unconfined > top ? top : unconfined);
     var value      = converter.positionToValue(this.state.positionOne, this.optionsArray, this.props.sliderLength);
-    if (Math.abs(gestureState.dy) < this.props.slipDisplacement) {
+
+    var slipDisplacement = this.props.touchDimensions.slipDisplacement;
+
+    if (Math.abs(gestureState.dy) < slipDisplacement || !slipDisplacement) {
       this.setState({
         positionOne: confined
       });
@@ -127,8 +134,9 @@ var Slider = React.createClass({
     var top         = this.props.sliderLength;
     var confined    = unconfined < bottom ? bottom : (unconfined > top ? top : unconfined);
     var value       = converter.positionToValue(this.state.positionTwo, this.optionsArray, this.props.sliderLength);
+    var slipDisplacement = this.props.touchDimensions.slipDisplacement;
 
-    if (Math.abs(gestureState.dy) < this.props.slipDisplacement) {
+    if (Math.abs(gestureState.dy) < slipDisplacement || !slipDisplacement) {
       this.setState({
         positionTwo: confined
       });
@@ -176,6 +184,14 @@ var Slider = React.createClass({
     var trackThreeStyle = unselectedStyle;
     var trackTwoLength = sliderLength - trackOneLength - trackThreeLength;
     var trackTwoStyle = twoMarkers ? selectedStyle : unselectedStyle;
+    var Marker = this.props.customMarker;
+    var {slipDisplacement, height, width, borderRadius} = this.props.touchDimensions;
+    var touchStyle = {
+      height: height,
+      width: width,
+      left: -width/2,
+      borderRadius: borderRadius || 0
+    };
 
     return (
       <View style={[styles.container, this.props.containerStyle]}>
@@ -183,19 +199,31 @@ var Slider = React.createClass({
           <View style={[this.props.trackStyle, styles.track, trackOneStyle, {width: trackOneLength}]} />
           <View style={[this.props.trackStyle, styles.track, trackTwoStyle, {width: trackTwoLength}]}>
             <View
+              style={[styles.touch,touchStyle]}
               ref={component => this._markerOne = component}
-              style={[this.props.markerStyle, this.state.onePressed && this.props.pressedMarkerStyle]}
               {...this._panResponderOne.panHandlers}
-            />
+            >
+              <Marker
+                pressed={this.state.onePressed}
+                markerStyle={this.props.markerStyle}
+                pressedMarkerStyle={this.props.pressedMarkerStyle}
+              />
+            </View>
           </View>
           {twoMarkers && (
             <View style={[this.props.trackStyle, styles.track, trackThreeStyle, {width: trackThreeLength}]}>
               {(positionOne !== this.props.sliderLength) && (
                 <View
+                  style={[styles.touch,touchStyle]}
                   ref={component => this._markerTwo = component}
-                  style={[this.props.markerStyle, this.state.twoPressed && this.props.pressedMarkerStyle]}
                   {...this._panResponderTwo.panHandlers}
-                />
+                >
+                  <Marker
+                    pressed={this.state.twoPressed}
+                    markerStyle={this.props.markerStyle}
+                    pressedMarkerStyle={this.props.pressedMarkerStyle}
+                  />
+                </View>
               )}
             </View>
           )}
@@ -217,5 +245,10 @@ var styles = StyleSheet.create({
   },
   track: {
     justifyContent: 'center'
+  },
+  touch: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent'
   }
 });

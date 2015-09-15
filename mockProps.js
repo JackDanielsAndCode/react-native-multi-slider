@@ -1,5 +1,28 @@
 'use strict';
 
+var React = require('react-native');
+var {
+  PropTypes,
+  View,
+} = React;
+
+var BasicMarker = React.createClass({
+
+  propTypes: {
+    pressed: PropTypes.bool,
+    pressedMarkerStyle: PropTypes.object,
+    markerStyle: PropTypes.object
+  },
+
+  render: function () {
+    return (
+      <View
+        style={[this.props.markerStyle, this.props.pressed && this.props.pressedMarkerStyle]}
+      />
+    );
+  }
+});
+
 var mockProps = {
   values: [0],
   onValuesChangeStart: function () {
@@ -14,7 +37,6 @@ var mockProps = {
   step: 1,
   min:0,
   max:10,
-  slipDisplacement: 50,
   selectedStyle: {
     backgroundColor: 'blue'
   },
@@ -22,21 +44,27 @@ var mockProps = {
     backgroundColor: 'grey'
   },
   containerStyle: {
-    height:100,
+    height:30,
   },
   trackStyle: {
-    height:10,
-    borderRadius: 5,
+    height:7,
+    borderRadius: 3.5,
+  },
+  touchDimensions: {
+    height: 30,
+    width: 30,
+    borderRadius: 15,
+    slipDisplacement: 30,
   },
   markerStyle: {
     height:30,
     width: 30,
     borderRadius: 15,
     backgroundColor:'#E8E8E8',
-    left: -15,
     borderWidth: 0.5,
     borderColor: 'grey',
   },
+  customMarker: BasicMarker,
   pressedMarkerStyle: {
     backgroundColor:'#D3D3D3',
   },
