@@ -87,6 +87,23 @@ var Slider = React.createClass({
 
   },
 
+  set(values) {
+    this.optionsArray = this.props.optionsArray || converter.createArray(this.props.min,this.props.max,this.props.step);
+    this.stepLength = this.props.sliderLength/this.optionsArray.length;
+
+    var initialValues = values.map(value => converter.valueToPosition(value,this.optionsArray,this.props.sliderLength));
+
+    this.setState({
+      pressedOne: true,
+      valueOne: values[0],
+      valueTwo: values[1],
+      pastOne: initialValues[0],
+      pastTwo: initialValues[1],
+      positionOne: initialValues[0],
+      positionTwo: initialValues[1]
+    });
+  },
+
   startOne () {
     this.props.onValuesChangeStart();
     this.setState({
