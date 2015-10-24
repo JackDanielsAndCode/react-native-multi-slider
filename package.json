@@ -28,6 +28,6 @@
   },
   "homepage": "https://github.com/JackDanielsAndCode/react-native-multi-slider#readme",
   "dependencies": {
-    "react-native": "^0.10.1"
+    "react-native": ">=0.10.1"
   }
 }
