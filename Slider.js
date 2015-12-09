@@ -33,12 +33,12 @@ var sliderProps = {
 
   optionsArray: PropTypes.array,
 
-  containerStyle: PropTypes.object,
-  trackStyle: PropTypes.object,
-  selectedStyle: PropTypes.object,
-  unselectedStyle: PropTypes.object,
-  markerStyle: PropTypes.object,
-  pressedMarkerStyle: PropTypes.object
+  containerStyle: View.propTypes.style,
+  trackStyle: View.propTypes.style,
+  selectedStyle: View.propTypes.style,
+  unselectedStyle: View.propTypes.style,
+  markerStyle: View.propTypes.style,
+  pressedMarkerStyle: View.propTypes.style
 };
 
 var Slider = React.createClass({

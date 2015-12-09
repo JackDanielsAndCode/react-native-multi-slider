@@ -10,8 +10,8 @@ var BasicMarker = React.createClass({
 
   propTypes: {
     pressed: PropTypes.bool,
-    pressedMarkerStyle: PropTypes.object,
-    markerStyle: PropTypes.object
+    pressedMarkerStyle: View.propTypes.style,
+    markerStyle: View.propTypes.style
   },
 
   render: function () {
