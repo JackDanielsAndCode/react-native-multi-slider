@@ -17,7 +17,7 @@ var CustomMarker = React.createClass({
     return (
       <Image
         style={styles.image}
-        source={this.props.pressed ? require('image!ruby') : require('image!diamond')}
+        source={this.props.pressed ? require('./ruby.png') : require('./diamond.png')}
         resizeMode='contain'
       />
     );
