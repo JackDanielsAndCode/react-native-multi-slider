@@ -25,7 +25,7 @@ var sliderProps = {
   sliderOrientation: PropTypes.string,
   touchDimensions: PropTypes.object,
 
-  customMarker: PropTypes.element,
+  customMarker: PropTypes.func,
 
   min: PropTypes.number,
   max: PropTypes.number,
