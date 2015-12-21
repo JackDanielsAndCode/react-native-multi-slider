@@ -1,5 +1,7 @@
 # react-native-multi-slider
 
+[![NPM](https://nodei.co/npm-dl/react-native-multi-slider.png?months=3)](https://nodei.co/npm/react-native-multi-slider/)
+
 Pure JS react native slider component with one or two markers.
 Options to customise track, touch area and provide customer markers and callbacks for touch events and value changes.
 
