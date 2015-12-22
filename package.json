@@ -26,8 +26,5 @@
   "bugs": {
     "url": "https://github.com/JackDanielsAndCode/react-native-multi-slider/issues"
   },
-  "homepage": "https://github.com/JackDanielsAndCode/react-native-multi-slider#readme",
-  "dependencies": {
-    "react-native": ">=0.14.2"
-  }
+  "homepage": "https://github.com/JackDanielsAndCode/react-native-multi-slider#readme"
 }
