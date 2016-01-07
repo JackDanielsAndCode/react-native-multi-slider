@@ -87,6 +87,16 @@ var Slider = React.createClass({
 
   },
 
+  componentWillReceiveProps(nextProps) {
+    var { values } = this.props;
+
+    // Maybe there is a more fancy way to check array
+    // inequality, but for now it works :).
+    if (nextProps.values.join() !== values.join()) {
+      this.set(nextProps.values);
+    }
+  },
+
   set(values) {
     this.optionsArray = this.props.optionsArray || converter.createArray(this.props.min,this.props.max,this.props.step);
     this.stepLength = this.props.sliderLength/this.optionsArray.length;
