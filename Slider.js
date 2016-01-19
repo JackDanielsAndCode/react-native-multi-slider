@@ -25,7 +25,7 @@ var sliderProps = {
   sliderOrientation: PropTypes.string,
   touchDimensions: PropTypes.object,
 
-  customMarker: PropTypes.element,
+  customMarker: PropTypes.func,
 
   min: PropTypes.number,
   max: PropTypes.number,
@@ -33,12 +33,12 @@ var sliderProps = {
 
   optionsArray: PropTypes.array,
 
-  containerStyle: PropTypes.object,
-  trackStyle: PropTypes.object,
-  selectedStyle: PropTypes.object,
-  unselectedStyle: PropTypes.object,
-  markerStyle: PropTypes.object,
-  pressedMarkerStyle: PropTypes.object
+  containerStyle: View.propTypes.style,
+  trackStyle: View.propTypes.style,
+  selectedStyle: View.propTypes.style,
+  unselectedStyle: View.propTypes.style,
+  markerStyle: View.propTypes.style,
+  pressedMarkerStyle: View.propTypes.style
 };
 
 var Slider = React.createClass({
@@ -85,6 +85,16 @@ var Slider = React.createClass({
     this._panResponderOne = customPanResponder(this.startOne, this.moveOne, this.endOne);
     this._panResponderTwo = customPanResponder(this.startTwo, this.moveTwo, this.endTwo);
 
+  },
+
+  componentWillReceiveProps(nextProps) {
+    var { values } = this.props;
+
+    // Maybe there is a more fancy way to check array
+    // inequality, but for now it works :).
+    if (nextProps.values.join() !== values.join()) {
+      this.set(nextProps.values);
+    }
   },
 
   set(values) {
