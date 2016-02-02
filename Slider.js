@@ -93,12 +93,12 @@ var Slider = React.createClass({
     // Maybe there is a more fancy way to check array
     // inequality, but for now it works :).
     if (nextProps.values.join() !== values.join()) {
-      this.set(nextProps.values);
+      this.set(nextProps.values, nextProps.min, nextProps.max, nextProps.step);
     }
   },
 
-  set(values) {
-    this.optionsArray = this.props.optionsArray || converter.createArray(this.props.min,this.props.max,this.props.step);
+  set(values, min, max, step) {
+    this.optionsArray = this.props.optionsArray || converter.createArray(min, max, step);
     this.stepLength = this.props.sliderLength/this.optionsArray.length;
 
     var initialValues = values.map(value => converter.valueToPosition(value,this.optionsArray,this.props.sliderLength));
