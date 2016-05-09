@@ -22,7 +22,7 @@
     "iOS"
   ],
   "author": "Danwhy, jrans",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/JackDanielsAndCode/react-native-multi-slider/issues"
   },
