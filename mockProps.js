@@ -5,6 +5,7 @@ var ReactNative = require('react-native');
 var {
   PropTypes
 } = React;
+var {
   View
 } = ReactNative;
 
