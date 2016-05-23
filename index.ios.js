@@ -1,6 +1,6 @@
 'use strict';
 
-var React = require('react-native');
+var ReactNative = require('react-native');
 var {
   AppRegistry,
   StyleSheet,
@@ -8,7 +8,7 @@ var {
   Text,
   SliderIOS,
   Image
-} = React;
+} = ReactNative;
 
 var MultiSlider  = require('./Slider.js');
 var customMarker = require('./customMarker.js');

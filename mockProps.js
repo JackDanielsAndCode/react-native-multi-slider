@@ -1,10 +1,12 @@
 'use strict';
 
-var React = require('react-native');
+var React = require('react');
+var ReactNative = require('react-native');
 var {
-  PropTypes,
-  View,
+  PropTypes
 } = React;
+  View
+} = ReactNative;
 
 var BasicMarker = React.createClass({
 
