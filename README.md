@@ -1,5 +1,7 @@
 # react-native-multi-slider
 
+**Note:** Anyone using RN <=0.18  should use version 0.2.5
+
 [![NPM](https://nodei.co/npm-dl/react-native-multi-slider.png?months=3)](https://nodei.co/npm/react-native-multi-slider/)
 
 Pure JS react native slider component with one or two markers.
