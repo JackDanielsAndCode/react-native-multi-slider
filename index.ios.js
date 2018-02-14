@@ -10,10 +10,11 @@ var {
   Image
 } = ReactNative;
 
+var createReactClass = require('create-react-class');
 var MultiSlider  = require('./Slider.js');
 var customMarker = require('./customMarker.js');
 
-var Slider = React.createClass({
+var Slider = createReactClass({
 
   getInitialState: function () {
     return {

@@ -2,19 +2,20 @@
 
 var React = require('react');
 var ReactNative = require('react-native');
-var {
-  PropTypes
-} = React;
+var PropTypes = require('prop-types');
+var createReactClass = require('create-react-class');
 var {
   StyleSheet,
   PanResponder,
   View,
+  ViewPropTypes,
   TouchableHighlight
 } = ReactNative;
 
 var converter = require('./converter.js');
 var mockProps = require('./mockProps.js');
 
+var ViewStylePropTypes = ViewPropTypes ? ViewPropTypes.style : View.propTypes.style;
 
 
 var sliderProps = {
@@ -36,15 +37,15 @@ var sliderProps = {
 
   optionsArray: PropTypes.array,
 
-  containerStyle: View.propTypes.style,
-  trackStyle: View.propTypes.style,
-  selectedStyle: View.propTypes.style,
-  unselectedStyle: View.propTypes.style,
-  markerStyle: View.propTypes.style,
-  pressedMarkerStyle: View.propTypes.style
+  containerStyle: ViewStylePropTypes,
+  trackStyle: ViewStylePropTypes,
+  selectedStyle: ViewStylePropTypes,
+  unselectedStyle: ViewStylePropTypes,
+  markerStyle: ViewStylePropTypes,
+  pressedMarkerStyle: ViewStylePropTypes
 };
 
-var Slider = React.createClass({
+var Slider = createReactClass({
 
   propTypes: sliderProps,
 
